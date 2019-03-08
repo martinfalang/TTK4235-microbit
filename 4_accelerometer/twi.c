@@ -20,6 +20,7 @@ void twi_init(){
 }
 
 void twi_multi_read(uint8_t slave_address, uint8_t start_register, int registers_to_read, uint8_t* data_buffer) {
+    
     //Set slave address register
     TWIO->ADDRESS = slave_address;
     
@@ -36,8 +37,15 @@ void twi_multi_read(uint8_t slave_address, uint8_t start_register, int registers
     while(!(TWIO->TXDSENT)){
         //Wait..
     }
-    uart_send('Q');
+
+
+   
     TWIO->TXDSENT = 0;
+    TWIO->RXDREADY = 0;
+
+    for (int i = 0; i < 10; i++) {
+        __asm("nop");
+    }
 
     //Start reading
     TWIO->STARTRX = 1;
@@ -58,8 +66,9 @@ void twi_multi_read(uint8_t slave_address, uint8_t start_register, int registers
     //Read last byte and NACK slave
     while(!(TWIO->RXDREADY)){
         //Wait..
-        uart_send('Y');
+        
     }
+
     data_buffer[registers_to_read-1] = TWIO->RXD;
     TWIO->RXDREADY = 0;
 }

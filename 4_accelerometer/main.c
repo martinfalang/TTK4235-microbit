@@ -15,15 +15,16 @@ int main(){
 
     uart_init();
     twi_init();
-    
+
     int sleep = 0;
 
 
     while(1) {
-        twi_multi_read(0x5A, 0x0D, 1, data_buffer);
-
-        uart_send('0' + (char)data_buffer[0]);
-        //uart_send('C');
+        twi_multi_read(0x19, 0x0F, 1, data_buffer);
+        utility_print(&uart_send, "who am I: %d\n", data_buffer[0]);
+        //uart_send((char)data_buffer[0]);
+        //uart_send(data_buffer[0]);
+        //uart_send('G');
 
 
         sleep = 10000;
